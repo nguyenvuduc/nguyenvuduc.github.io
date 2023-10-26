@@ -234,7 +234,16 @@
                       // Or a function that should return %id%, for example:
                       // id: function(url) { return 'parsed id'; }
 
-                      src: '%id%?autoplay=1' // URL that will be set as a source for iframe.
+                      src: '%id%?autoplay=1&mute=1' // URL that will be set as a source for iframe.
+                    },
+                    youtu: {
+                        index: 'youtu.be/', // String that detects type of video (in this case YouTube). Simply via url.indexOf(index).
+  
+                        id: function(url){
+                            return url.split('/')[3]
+                        },
+  
+                        src: 'https://www.youtube.com/embed/%id%?autoplay=1&mute=1' // URL that will be set as a source for iframe.
                     },
                     vimeo: {
                       index: 'vimeo.com/',

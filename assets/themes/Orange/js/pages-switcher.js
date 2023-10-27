@@ -80,7 +80,25 @@ var PageTransitionsFactory = function ($, options) {
 
         Animate(menuLink);
 
-        $('body').append('<div id="page-ajax-loaded" class="page-ajax-loaded animated rotateInDownRight"></div>');
+        $('body').append(
+            '<div class="material-template">' +
+            '   <div id="page-ajax-loaded" class="page-ajax-loaded animated rotateInDownRight" style="display:none;">' +
+            '       <div id="ajax-page" class="ajax-page-content">' +
+            '           <div class="ajax-page-wrapper">' +
+            '               <div class="ajax-page-nav">' +
+            '                   <div class="nav-item ajax-page-close-button">' +
+            '                       <a id="ajax-page-close-button" href="#"><i class="zmdi zmdi-close"></i></a>'+
+            '                   </div>'+
+            '               </div>'+
+            '               <div style="position: absolute;top: 4.2em;left: 0;right: 0;bottom: 0;">'+
+            '                   <iframe style="width:100%;height:100%;border:none;">' +
+            '                   </iframe>' +
+            '               </div>'+
+            '           </div>'+
+            '       </div>'+
+            '   </div>' +
+            '</div>'
+        );
         ajaxLoader();
     }
 
@@ -112,6 +130,7 @@ var PageTransitionsFactory = function ($, options) {
     function ajaxLoader() {
         // Check for hash value in URL
         var ajaxLoadedContent = $('#page-ajax-loaded');
+        var ajaxLoadedContentIFrame = $('#page-ajax-loaded iframe');
 
         function showContent() {
             ajaxLoadedContent.removeClass('rotateOutDownRight closed');
@@ -123,18 +142,27 @@ var PageTransitionsFactory = function ($, options) {
             $('#page-ajax-loaded').addClass('rotateOutDownRight closed');
             $('body').removeClass('ajax-page-visible');
             setTimeout(function(){
-                $('#page-ajax-loaded.closed').html('');
+                //$('#page-ajax-loaded.closed').html('');
+                $('#page-ajax-loaded iframe').attr('src', '');
                 ajaxLoadedContent.hide();
             }, 500);
+        }
+
+        function loadContent(url)
+        {
+            var toLoadUrl = new URL(url, window.location.href);
+            ajaxLoadedContentIFrame.attr('src', toLoadUrl.href);
         }
 
         var href = $('.ajax-page-load').each(function(){
             href = $(this).attr('href');
             if(location.hash == location.hash.split('/')[0] + '/' + href.substr(0,href.length-5)){
-                var toLoad =  $(this).attr('href');
-                showContent();
-                ajaxLoadedContent.load(toLoad);
-                return false;
+                //showContent();
+                
+                //var toLoad =  $(this).attr('href');
+                //var toLoadUrl = new URL(toLoad, window.location.href);
+                //ajaxLoadedContentIFrame.attr('src', toLoadUrl.href);
+                //return false;
             }
         });
 
@@ -142,12 +170,13 @@ var PageTransitionsFactory = function ($, options) {
             .on("click",".site-main-menu, #ajax-page-close-button", function (e) { // Hide Ajax Loaded Page on Navigation cleck and Close button
                 e.preventDefault();
                 hideContent();
-                location.hash = location.hash.split('/')[0];
+                //location.hash = location.hash.split('/')[0];
             })
             .on("click",".ajax-page-load", function () { // Show Ajax Loaded Page
                 var hash = location.hash.split('/')[0] + '/' + $(this).attr('href').substr(0,$(this).attr('href').length-5);
-                location.hash = hash;
+                //location.hash = hash;
                 showContent();
+                loadContent($(this).attr('href'));
 
                 return false;
             });
